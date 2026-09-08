@@ -6,7 +6,8 @@ import { Receipt } from '../models/Receipt.js';
 import { generateTransactionId } from '../services/transactionIdService.js';
 import mongoose from 'mongoose';
 
-const DEMO_PASSWORD = 'Password@123';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'admin@receipt.com';
+const DEMO_PASSWORD = process.env.ADMIN_PASSWORD ?? 'Password@123';
 
 interface DemoBank {
   name: string;
@@ -94,7 +95,7 @@ async function seed() {
   const superAdminHash = await bcrypt.hash(DEMO_PASSWORD, 12);
   const admin = await User.create({
     name: 'Platform Super Admin',
-    email: 'admin@receipt.com',
+    email: ADMIN_EMAIL,
     passwordHash: superAdminHash,
     role: 'super_admin',
   });
@@ -142,7 +143,7 @@ async function seed() {
     console.log(`[seed] created ${demo.name} -> /${demo.slug}`);
   }
 
-  console.log('\n[seed] done. Admin login: admin@receipt.com / ' + DEMO_PASSWORD);
+  console.log(`\n[seed] done. Admin login: ${ADMIN_EMAIL} / ${DEMO_PASSWORD}`);
 
   await mongoose.disconnect();
 }
