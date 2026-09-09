@@ -7,7 +7,11 @@ import type { JwtPayload } from '../types/index.js';
 const COOKIE_NAME = 'receipt_session';
 const REMEMBER_ME_EXPIRY = '30d';
 const REMEMBER_ME_COOKIE_MAX_AGE = 30 * 24 * 60 * 60 * 1000;
-const SESSION_EXPIRY = '1d';
+// This is a single-admin private tool, not a multi-user public app — there's
+// little security upside to a short-lived default session, and it was
+// causing re-logins mid-workday. Still a plain browser-session cookie (no
+// maxAge) unless "Remember me" is checked, so it clears on full browser close.
+const SESSION_EXPIRY = '7d';
 
 export function signToken(payload: JwtPayload, rememberMe = false): string {
   const expiresIn = rememberMe ? REMEMBER_ME_EXPIRY : SESSION_EXPIRY;
