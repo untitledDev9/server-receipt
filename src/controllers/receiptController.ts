@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { Types } from 'mongoose';
 import { Receipt } from '../models/Receipt.js';
 import { Business } from '../models/Business.js';
 import { User } from '../models/User.js';
@@ -101,9 +102,11 @@ export const updateReceipt = asyncHandler(async (req: Request, res: Response) =>
 
 export const getReceiptPdf = asyncHandler(async (req: Request, res: Response) => {
   const receipt = await loadReceipt(req);
-  const business = await Business.findById(receipt.businessId);
+  const [business, cashier] = await Promise.all([
+    Business.findById(receipt.businessId),
+    User.findById(receipt.cashierId).select('name'),
+  ]);
   if (!business) throw ApiError.notFound('Bank not found');
-  const cashier = await User.findById(receipt.cashierId).select('name');
 
   const pdfBuffer = await generateReceiptPdf(business, receipt, receipt.cashierName || cashier?.name || 'Staff');
   res.setHeader('Content-Type', 'application/pdf');
@@ -192,7 +195,10 @@ export const verifyReceipt = asyncHandler(async (req: Request, res: Response) =>
 export const getTenantDashboardStats = asyncHandler(async (req: Request, res: Response) => {
   const businessIdParam = req.query.businessId as string | undefined;
   if (!businessIdParam) throw ApiError.badRequest('businessId query parameter is required');
-  const businessId = businessIdParam;
+  // aggregate()'s $match isn't schema-cast the way find() is, so this has to
+  // be a real ObjectId or it silently compares against the stored ObjectId
+  // as a string and never matches anything.
+  const businessId = new Types.ObjectId(businessIdParam);
 
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
@@ -209,7 +215,7 @@ export const getTenantDashboardStats = asyncHandler(async (req: Request, res: Re
       { $match: { businessId, createdAt: { $gte: startOfMonth }, status: 'completed' } },
       { $group: { _id: null, sales: { $sum: '$amount' }, count: { $sum: 1 } } },
     ]),
-    Receipt.find({ businessId }).sort({ createdAt: -1 }).limit(8).populate('cashierId', 'name'),
+    Receipt.find({ businessId: businessIdParam }).sort({ createdAt: -1 }).limit(8).populate('cashierId', 'name'),
   ]);
 
   const today = todayAgg[0] ?? { sales: 0, count: 0 };
