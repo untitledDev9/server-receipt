@@ -1,22 +1,12 @@
-import crypto from 'node:crypto';
-import path from 'node:path';
 import multer from 'multer';
-import { storageService } from '../services/storageService.js';
 
 const ALLOWED_MIME = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml', 'image/x-icon']);
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, storageService.root),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const name = `${crypto.randomUUID()}${ext}`;
-    cb(null, name);
-  },
-});
-
+// Memory storage: the file lands in req.file.buffer instead of on disk, so
+// the controller can write it straight into MongoDB.
 export const uploadImage = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: MAX_FILE_SIZE },
   fileFilter: (_req, file, cb) => {
     if (!ALLOWED_MIME.has(file.mimetype)) {

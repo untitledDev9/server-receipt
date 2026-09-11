@@ -103,7 +103,7 @@ export const updateReceipt = asyncHandler(async (req: Request, res: Response) =>
 export const getReceiptPdf = asyncHandler(async (req: Request, res: Response) => {
   const receipt = await loadReceipt(req);
   const [business, cashier] = await Promise.all([
-    Business.findById(receipt.businessId),
+    Business.findById(receipt.businessId).select('+logoImage.data'),
     User.findById(receipt.cashierId).select('name'),
   ]);
   if (!business) throw ApiError.notFound('Bank not found');

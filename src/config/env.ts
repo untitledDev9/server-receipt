@@ -18,13 +18,7 @@ export const env = {
   mongodbUri: required('MONGODB_URI', 'mongodb://127.0.0.1:27017/receipt-platform'),
   jwtSecret: required('JWT_SECRET', 'dev-secret-change-me'),
   clientUrl: process.env.CLIENT_URL ?? 'http://localhost:5173',
-  // The server's own publicly reachable base URL. Used to build absolute
-  // links to uploaded files (logos) so they still render once the client is
-  // deployed on a different domain than the API — set this to the real
-  // deployed API URL in production.
-  publicUrl: process.env.PUBLIC_SERVER_URL ?? `http://localhost:${port}`,
   platformName: process.env.PLATFORM_NAME ?? 'Receipt',
-  uploadDir: process.env.UPLOAD_DIR ?? 'uploads',
 };
 
 export const isProd = env.nodeEnv === 'production';

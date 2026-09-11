@@ -5,7 +5,6 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { createBusinessSchema, updateBusinessSchema } from '../validation/businessValidation.js';
 import { isSlugAvailable, suggestSlug } from '../services/slugService.js';
-import { storageService } from '../services/storageService.js';
 import { isReservedSlug } from '../config/reservedSlugs.js';
 
 export const listBusinesses = asyncHandler(async (req: Request, res: Response) => {
@@ -134,8 +133,7 @@ export const uploadBusinessLogo = asyncHandler(async (req: Request, res: Respons
   const business = await Business.findById(req.params.id);
   if (!business) throw ApiError.notFound('Bank not found');
 
-  storageService.remove(business.logoUrl?.split('/').pop());
-  business.logoUrl = storageService.urlFor(req.file.filename);
+  business.logoImage = { data: req.file.buffer, contentType: req.file.mimetype };
   await business.save();
   res.json({ business });
 });
@@ -145,15 +143,34 @@ export const uploadBusinessFavicon = asyncHandler(async (req: Request, res: Resp
   const business = await Business.findById(req.params.id);
   if (!business) throw ApiError.notFound('Bank not found');
 
-  storageService.remove(business.faviconUrl?.split('/').pop());
-  business.faviconUrl = storageService.urlFor(req.file.filename);
+  business.faviconImage = { data: req.file.buffer, contentType: req.file.mimetype };
   await business.save();
   res.json({ business });
 });
 
+// Public, unauthenticated: referenced directly from <img> tags on public
+// receipt/business pages (and in staff dashboards), so this can't sit
+// behind requireAuth. Keyed by slug rather than id to match the rest of
+// the public API surface.
+export const getBusinessLogo = asyncHandler(async (req: Request, res: Response) => {
+  const business = await Business.findOne({ slug: req.params.slug.toLowerCase() }).select('logoImage.contentType +logoImage.data');
+  if (!business?.logoImage?.data) throw ApiError.notFound('Logo not found');
+  res.setHeader('Content-Type', business.logoImage.contentType || 'application/octet-stream');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.send(business.logoImage.data);
+});
+
+export const getBusinessFavicon = asyncHandler(async (req: Request, res: Response) => {
+  const business = await Business.findOne({ slug: req.params.slug.toLowerCase() }).select('faviconImage.contentType +faviconImage.data');
+  if (!business?.faviconImage?.data) throw ApiError.notFound('Favicon not found');
+  res.setHeader('Content-Type', business.faviconImage.contentType || 'application/octet-stream');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.send(business.faviconImage.data);
+});
+
 export const getPublicBusiness = asyncHandler(async (req: Request, res: Response) => {
   const business = await Business.findOne({ slug: req.params.slug.toLowerCase() }).select(
-    'name slug slogan description logoUrl faviconUrl address phone whatsapp email website taxId registrationNumber currency status branding receiptConfig'
+    'name slug slogan description logoImage.contentType faviconImage.contentType address phone whatsapp email website taxId registrationNumber currency status branding receiptConfig'
   );
   if (!business) throw ApiError.notFound('Bank not found');
   res.json({ business });

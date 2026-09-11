@@ -56,12 +56,20 @@ export interface ReceiptConfig {
   showPlatformBranding: boolean;
 }
 
+export interface BusinessImage {
+  data?: Buffer;
+  contentType?: string;
+}
+
 export interface BusinessDocument {
   _id: Types.ObjectId;
   name: string;
   slug: string;
   slogan?: string;
   description?: string;
+  logoImage?: BusinessImage;
+  faviconImage?: BusinessImage;
+  // Virtuals derived from logoImage/faviconImage — see businessSchema.virtual below.
   logoUrl?: string;
   faviconUrl?: string;
   address: {
@@ -155,8 +163,21 @@ const businessSchema = new Schema<BusinessDocument>(
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
     slogan: { type: String, trim: true },
     description: { type: String, trim: true },
-    logoUrl: String,
-    faviconUrl: String,
+    // Stored directly in MongoDB rather than on local disk: Render's (and
+    // most PaaS) filesystems are ephemeral, so anything written to disk is
+    // lost on every redeploy/restart. Logos are small (<=2MB, enforced at
+    // upload) so this comfortably fits Mongo's 16MB document limit.
+    // `data` is select: false so ordinary business queries (lists, detail
+    // pages) don't pull image bytes over the wire — only the dedicated
+    // logo/favicon-serving routes opt in with `.select('+logoImage.data')`.
+    logoImage: {
+      data: { type: Buffer, select: false },
+      contentType: String,
+    },
+    faviconImage: {
+      data: { type: Buffer, select: false },
+      contentType: String,
+    },
     address: { type: addressSchema, default: () => ({}) },
     phone: String,
     whatsapp: String,
@@ -170,7 +191,20 @@ const businessSchema = new Schema<BusinessDocument>(
     receiptConfig: { type: receiptConfigSchema, default: () => ({}) },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+// `?v=` busts client/CDN caches whenever the business document changes —
+// cheaper than tracking a separate per-image version, at the cost of also
+// invalidating the cache on unrelated field edits.
+businessSchema.virtual('logoUrl').get(function (this: BusinessDocument) {
+  if (!this.logoImage?.contentType) return undefined;
+  return `/api/public/businesses/${this.slug}/logo?v=${this.updatedAt?.getTime() ?? 0}`;
+});
+
+businessSchema.virtual('faviconUrl').get(function (this: BusinessDocument) {
+  if (!this.faviconImage?.contentType) return undefined;
+  return `/api/public/businesses/${this.slug}/favicon?v=${this.updatedAt?.getTime() ?? 0}`;
+});
 
 export const Business = model<BusinessDocument>('Business', businessSchema);
