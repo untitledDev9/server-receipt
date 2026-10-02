@@ -84,6 +84,8 @@ export interface BusinessDocument {
   website?: string;
   taxId?: string;
   registrationNumber?: string;
+  bankName?: string;
+  accountNumber?: string;
   currency: string;
   status: BusinessStatus;
   branding: BrandingConfig;
@@ -185,6 +187,8 @@ const businessSchema = new Schema<BusinessDocument>(
     website: String,
     taxId: String,
     registrationNumber: String,
+    bankName: String,
+    accountNumber: String,
     currency: { type: String, default: 'USD' },
     status: { type: String, enum: ['active', 'suspended'], default: 'active' },
     branding: { type: brandingSchema, default: () => ({}) },

@@ -6,6 +6,14 @@ export interface ReceiptCustomer {
   phone?: string;
   email?: string;
   address?: string;
+  bankName?: string;
+  accountNumber?: string;
+}
+
+export interface ReceiptSender {
+  name?: string;
+  bankName?: string;
+  accountNumber?: string;
 }
 
 export interface ReceiptDocument {
@@ -15,6 +23,7 @@ export interface ReceiptDocument {
   transactionId: string;
   amount: number;
   narration?: string;
+  sender?: ReceiptSender;
   customer: ReceiptCustomer;
   paymentMethod: PaymentMethod;
   cashierId: Types.ObjectId;
@@ -34,11 +43,18 @@ const receiptSchema = new Schema<ReceiptDocument>(
     transactionId: { type: String, required: true, unique: true },
     amount: { type: Number, required: true, min: 0 },
     narration: { type: String, trim: true },
+    sender: {
+      name: String,
+      bankName: String,
+      accountNumber: String,
+    },
     customer: {
       name: String,
       phone: String,
       email: String,
       address: String,
+      bankName: String,
+      accountNumber: String,
     },
     paymentMethod: {
       type: String,
