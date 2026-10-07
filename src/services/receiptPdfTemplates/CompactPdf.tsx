@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
 export function CompactPdf({ business, receipt, cashierName, qrDataUrl }: ReceiptPdfProps) {
   const { header, footerText, showPlatformBranding } = business.receiptConfig;
   const currency = business.currency;
-  const isVoid = receipt.status === 'void';
   const taxLine = getTaxLine(business);
   const contactLines = getContactLines(business);
 
@@ -61,7 +60,7 @@ export function CompactPdf({ business, receipt, cashierName, qrDataUrl }: Receip
 
           <View style={styles.statusRow}>
             <Text style={styles.label}>Status</Text>
-            <Text style={isVoid ? styles.statusVoid : styles.statusSuccess}>{isVoid ? 'Voided' : 'Successful'}</Text>
+            <Text style={receipt.status === 'reversed' ? styles.statusVoid : styles.statusSuccess}>{receipt.status === 'reversed' ? 'Reversed' : receipt.status === 'pending' ? 'Pending' : 'Successful'}</Text>
           </View>
           <View style={styles.amountRow}>
             <Text style={styles.label}>Amount</Text>

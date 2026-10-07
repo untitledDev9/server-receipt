@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 export function MinimalPdf({ business, receipt, cashierName, qrDataUrl }: ReceiptPdfProps) {
   const { header, footerText, showPlatformBranding } = business.receiptConfig;
   const currency = business.currency;
-  const isVoid = receipt.status === 'void';
+  
   const taxLine = getTaxLine(business);
   const contactLines = getContactLines(business);
 
@@ -60,8 +60,8 @@ export function MinimalPdf({ business, receipt, cashierName, qrDataUrl }: Receip
         {taxLine ? <Text style={styles.taxLine}>{taxLine}</Text> : null}
 
         <View style={styles.statusRow}>
-          <View style={[styles.dot, isVoid ? styles.dotVoid : styles.dotSuccess]} />
-          <Text style={styles.statusText}>{isVoid ? 'Voided' : 'Successful'}</Text>
+          <View style={[styles.dot, receipt.status === 'reversed' ? styles.dotVoid : styles.dotSuccess]} />
+          <Text style={styles.statusText}>{receipt.status === 'reversed' ? 'Reversed' : receipt.status === 'pending' ? 'Pending' : 'Successful'}</Text>
         </View>
         <Text style={styles.amount}>{formatMoney(receipt.amount, currency)}</Text>
 

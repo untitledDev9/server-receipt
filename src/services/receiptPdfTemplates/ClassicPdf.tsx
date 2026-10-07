@@ -27,8 +27,14 @@ const styles = StyleSheet.create({
 export function ClassicPdf({ business, receipt, cashierName, qrDataUrl }: ReceiptPdfProps) {
   const { header, footerText, showPlatformBranding } = business.receiptConfig;
   const currency = business.currency;
-  const isVoid = receipt.status === 'void';
   const taxLine = getTaxLine(business);
+
+  const statusConfig = {
+    completed: { badge: styles.statusBadgeSuccess, text: styles.statusTextSuccess, label: 'SUCCESSFUL' },
+    pending: { badge: { ...styles.statusBadge, backgroundColor: '#fef3c7' }, text: { ...styles.statusTextVoid, color: '#b45309' }, label: 'PENDING' },
+    reversed: { badge: styles.statusBadgeVoid, text: styles.statusTextVoid, label: 'REVERSED' },
+  };
+  const current = statusConfig[receipt.status as keyof typeof statusConfig] || statusConfig.completed;
 
   return (
     <Document title={`${receipt.receiptNumber} - ${business.name}`}>
@@ -50,8 +56,8 @@ export function ClassicPdf({ business, receipt, cashierName, qrDataUrl }: Receip
 
         <View style={styles.divider} />
 
-        <View style={[styles.statusBadge, isVoid ? styles.statusBadgeVoid : styles.statusBadgeSuccess]}>
-          <Text style={isVoid ? styles.statusTextVoid : styles.statusTextSuccess}>{isVoid ? 'VOIDED' : 'SUCCESSFUL'}</Text>
+        <View style={[styles.statusBadge, current.badge]}>
+          <Text style={current.text}>{current.label}</Text>
         </View>
         <Text style={styles.amount}>{formatMoney(receipt.amount, currency)}</Text>
 

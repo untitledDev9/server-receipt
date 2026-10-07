@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 export function FormalPdf({ business, receipt, cashierName, qrDataUrl }: ReceiptPdfProps) {
   const { header, footerText, showPlatformBranding } = business.receiptConfig;
   const currency = business.currency;
-  const isVoid = receipt.status === 'void';
+  
   const taxLine = getTaxLine(business);
   const contactLines = getContactLines(business);
 
@@ -60,8 +60,8 @@ export function FormalPdf({ business, receipt, cashierName, qrDataUrl }: Receipt
                 {header.showSlogan && business.slogan ? <Text style={styles.slogan}>{business.slogan}</Text> : null}
               </View>
             </View>
-            <View style={[styles.badge, isVoid ? styles.badgeVoid : styles.badgePaid]}>
-              <Text style={isVoid ? styles.badgeTextVoid : styles.badgeTextPaid}>{isVoid ? 'Void' : 'Paid'}</Text>
+            <View style={[styles.badge, receipt.status === 'reversed' ? styles.badgeVoid : styles.badgePaid]}>
+              <Text style={receipt.status === 'reversed' ? styles.badgeTextVoid : styles.badgeTextPaid}>{receipt.status === 'reversed' ? 'Reversed' : receipt.status === 'pending' ? 'Pending' : 'Paid'}</Text>
             </View>
           </View>
 

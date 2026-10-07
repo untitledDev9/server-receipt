@@ -36,7 +36,7 @@ function Field({ label, value }: { label: string; value?: string }) {
 export function ModernPdf({ business, receipt, cashierName, qrDataUrl }: ReceiptPdfProps) {
   const { header, footerText, showPlatformBranding } = business.receiptConfig;
   const currency = business.currency;
-  const isVoid = receipt.status === 'void';
+  
   const taxLine = getTaxLine(business);
   const contactLines = getContactLines(business);
 
@@ -51,7 +51,7 @@ export function ModernPdf({ business, receipt, cashierName, qrDataUrl }: Receipt
               {header.showSlogan && business.slogan ? <Text style={styles.slogan}>{business.slogan}</Text> : null}
             </View>
           </View>
-          <Text style={styles.statusRow}>{isVoid ? 'Voided' : 'Successful'}</Text>
+          <Text style={styles.statusRow}>{receipt.status === 'reversed' ? 'Reversed' : receipt.status === 'pending' ? 'Pending' : 'Successful'}</Text>
           <Text style={styles.amount}>{formatMoney(receipt.amount, currency)}</Text>
         </View>
 

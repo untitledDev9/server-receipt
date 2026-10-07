@@ -63,7 +63,7 @@ const receiptSchema = new Schema<ReceiptDocument>(
     },
     cashierId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     cashierName: { type: String, trim: true },
-    status: { type: String, enum: ['completed', 'void'], default: 'completed' },
+    status: { type: String, enum: ['completed', 'pending', 'reversed'], default: 'completed' },
   },
   { timestamps: true }
 );

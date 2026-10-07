@@ -88,13 +88,14 @@ export const getReceipt = asyncHandler(async (req: Request, res: Response) => {
 export const updateReceipt = asyncHandler(async (req: Request, res: Response) => {
   const data = updateReceiptSchema.parse(req.body);
   const receipt = await loadReceipt(req);
-  if (receipt.status === 'void') throw ApiError.badRequest('Cannot edit a voided receipt');
 
   if (data.amount !== undefined) receipt.amount = data.amount;
   if (data.narration !== undefined) receipt.narration = data.narration;
+  if (data.sender !== undefined) receipt.sender = data.sender;
   if (data.customer !== undefined) receipt.customer = data.customer;
   if (data.paymentMethod !== undefined) receipt.paymentMethod = data.paymentMethod;
   if (data.cashierName !== undefined) receipt.cashierName = data.cashierName;
+  if (data.status !== undefined) receipt.status = data.status;
   await receipt.save();
 
   res.json({ receipt });
@@ -138,7 +139,7 @@ export const duplicateReceipt = asyncHandler(async (req: Request, res: Response)
 
 export const voidReceipt = asyncHandler(async (req: Request, res: Response) => {
   const receipt = await loadReceipt(req);
-  receipt.status = 'void';
+  receipt.status = 'reversed';
   await receipt.save();
   res.json({ receipt });
 });
