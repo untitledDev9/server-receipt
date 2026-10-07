@@ -15,6 +15,11 @@ const brandingSchema = z
     secondaryColor: z.string(),
     accentColor: z.string(),
     textColor: z.string(),
+    backgroundColor: z.string().optional(),
+    qrBackgroundColor: z.string().optional(),
+    qrTextColor: z.string().optional(),
+    labelTextColor: z.string().optional(),
+    headerTextColor: z.string().optional(),
     headerStyle: z.enum(['centered', 'left', 'split']),
   })
   .partial();
