@@ -41,6 +41,9 @@ export interface BrandingConfig {
   accentColor: string;
   textColor: string;
   backgroundColor?: string;
+  qrBackgroundColor?: string;
+  qrTextColor?: string;
+  labelTextColor?: string;
   headerStyle: 'centered' | 'left' | 'split';
 }
 
@@ -112,6 +115,10 @@ const brandingSchema = new Schema<BrandingConfig>(
     secondaryColor: { type: String, default: '#4b5563' },
     accentColor: { type: String, default: '#2563eb' },
     textColor: { type: String, default: '#111827' },
+    backgroundColor: String,
+    qrBackgroundColor: String,
+    qrTextColor: String,
+    labelTextColor: String,
     headerStyle: { type: String, enum: ['centered', 'left', 'split'], default: 'centered' },
   },
   { _id: false }
