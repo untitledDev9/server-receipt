@@ -2,7 +2,7 @@ export type UserRole = 'super_admin';
 
 export type BusinessStatus = 'active' | 'suspended';
 
-export type ReceiptStatus = 'completed' | 'pending' | 'reversed';
+export type ReceiptStatus = 'completed' | 'pending' | 'reversed' | 'refunded';
 
 export type PaymentMethod = 'cash' | 'transfer' | 'pos' | 'card' | 'mobile_money' | 'other';
 
