@@ -16,6 +16,7 @@ const brandingSchema = z
     accentColor: z.string(),
     textColor: z.string(),
     backgroundColor: z.string().optional(),
+    receiptBgColor: z.string().optional(),
     qrBackgroundColor: z.string().optional(),
     qrTextColor: z.string().optional(),
     labelTextColor: z.string().optional(),

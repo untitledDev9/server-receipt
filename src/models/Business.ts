@@ -41,6 +41,7 @@ export interface BrandingConfig {
   accentColor: string;
   textColor: string;
   backgroundColor?: string;
+  receiptBgColor?: string;
   qrBackgroundColor?: string;
   qrTextColor?: string;
   labelTextColor?: string;
@@ -121,6 +122,7 @@ const brandingSchema = new Schema<BrandingConfig>(
     accentColor: { type: String, default: '#2563eb' },
     textColor: { type: String, default: '#111827' },
     backgroundColor: { type: String, default: '#0f1419' },
+    receiptBgColor: { type: String, default: '#0f1419' },
     qrBackgroundColor: { type: String, default: 'rgba(255, 255, 255, 0.05)' },
     qrTextColor: { type: String, default: '#64748b' },
     labelTextColor: { type: String, default: '#64748b' },
