@@ -46,6 +46,10 @@ export interface BrandingConfig {
   labelTextColor?: string;
   headerTextColor?: string;
   headerStyle: 'centered' | 'left' | 'split';
+  headerPlacement?: 'top' | 'background' | 'minimal';
+  cornerRadius?: 'sharp' | 'rounded' | 'smooth';
+  accentLevel?: 'subtle' | 'medium' | 'bold';
+  spacing?: 'compact' | 'normal' | 'spacious';
 }
 
 export type ReceiptTemplate = 'classic' | 'modern' | 'formal' | 'minimal' | 'compact';
@@ -122,6 +126,10 @@ const brandingSchema = new Schema<BrandingConfig>(
     labelTextColor: { type: String, default: '#64748b' },
     headerTextColor: { type: String, default: '#ffffff' },
     headerStyle: { type: String, enum: ['centered', 'left', 'split'], default: 'centered' },
+    headerPlacement: { type: String, enum: ['top', 'background', 'minimal'], default: 'top' },
+    cornerRadius: { type: String, enum: ['sharp', 'rounded', 'smooth'], default: 'rounded' },
+    accentLevel: { type: String, enum: ['subtle', 'medium', 'bold'], default: 'medium' },
+    spacing: { type: String, enum: ['compact', 'normal', 'spacious'], default: 'normal' },
   },
   { _id: false }
 );

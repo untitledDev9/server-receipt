@@ -21,6 +21,10 @@ const brandingSchema = z
     labelTextColor: z.string().optional(),
     headerTextColor: z.string().optional(),
     headerStyle: z.enum(['centered', 'left', 'split']),
+    headerPlacement: z.enum(['top', 'background', 'minimal']).optional(),
+    cornerRadius: z.enum(['sharp', 'rounded', 'smooth']).optional(),
+    accentLevel: z.enum(['subtle', 'medium', 'bold']).optional(),
+    spacing: z.enum(['compact', 'normal', 'spacious']).optional(),
   })
   .partial();
 
