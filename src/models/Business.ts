@@ -40,6 +40,7 @@ export interface BrandingConfig {
   secondaryColor: string;
   accentColor: string;
   textColor: string;
+  backgroundColor?: string;
   headerStyle: 'centered' | 'left' | 'split';
 }
 
