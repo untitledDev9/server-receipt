@@ -26,10 +26,12 @@ export const createReceipt = asyncHandler(async (req: Request, res: Response) =>
     transactionId: generateTransactionId(),
     amount: data.amount,
     narration: data.narration,
+    sender: data.sender,
     customer: data.customer,
     paymentMethod: data.paymentMethod,
     cashierId: req.user!.userId,
     cashierName: data.cashierName,
+    status: data.status || 'completed',
   });
 
   res.status(201).json({ receipt });
