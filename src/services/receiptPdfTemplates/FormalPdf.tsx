@@ -34,14 +34,15 @@ const styles = StyleSheet.create({
 export function FormalPdf({ business, receipt, cashierName, qrDataUrl }: ReceiptPdfProps) {
   const { header, footerText, showPlatformBranding } = business.receiptConfig;
   const currency = business.currency;
-  
+  const primaryColor = business.branding.primaryColor || '#1e293b';
+
   const taxLine = getTaxLine(business);
   const contactLines = getContactLines(business);
 
   const rows: { label: string; value?: string }[] = [
     { label: 'Transaction ID', value: receipt.transactionId },
     { label: 'Date', value: formatDateTime(receipt.createdAt) },
-    { label: 'Paid by', value: receipt.customer?.name },
+    { label: 'Paid to', value: receipt.customer?.name },
     { label: 'Phone', value: receipt.customer?.phone },
     { label: 'Narration', value: receipt.narration },
     { label: 'Payment method', value: PAYMENT_LABELS[receipt.paymentMethod] ?? receipt.paymentMethod },
@@ -87,7 +88,7 @@ export function FormalPdf({ business, receipt, cashierName, qrDataUrl }: Receipt
 
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total</Text>
-            <Text style={[styles.totalValue, { color: business.branding.primaryColor }]}>{formatMoney(receipt.amount, currency)}</Text>
+            <Text style={[styles.totalValue, { color: primaryColor }]}>{formatMoney(receipt.amount, currency)}</Text>
           </View>
 
           {qrDataUrl ? <Image style={styles.qr} src={qrDataUrl} /> : null}

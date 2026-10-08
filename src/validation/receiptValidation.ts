@@ -24,6 +24,7 @@ export const createReceiptSchema = z.object({
   paymentMethod: z.enum(['cash', 'transfer', 'pos', 'card', 'mobile_money', 'other']),
   cashierName: z.string().max(150).optional(),
   status: z.enum(['completed', 'pending', 'reversed', 'refunded']).optional(),
+  template: z.enum(['classic', 'modern', 'formal', 'minimal', 'compact', 'white']).optional(),
 });
 
 export const updateReceiptSchema = createReceiptSchema.omit({ businessId: true }).extend({

@@ -35,7 +35,7 @@ export function MinimalPdf({ business, receipt, cashierName, qrDataUrl }: Receip
     { label: 'Reference', value: receipt.receiptNumber },
     { label: 'Transaction ID', value: receipt.transactionId },
     { label: 'Date', value: formatDateTime(receipt.createdAt) },
-    { label: 'Paid by', value: receipt.customer?.name },
+    { label: 'Paid to', value: receipt.customer?.name },
     { label: 'Phone', value: receipt.customer?.phone },
     { label: 'Narration', value: receipt.narration },
     { label: 'Payment method', value: PAYMENT_LABELS[receipt.paymentMethod] ?? receipt.paymentMethod },

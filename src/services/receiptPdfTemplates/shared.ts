@@ -47,6 +47,12 @@ export function getTaxLine(business: BusinessDocument): string | undefined {
     .join('   ·   ');
 }
 
+export function maskAccountNumber(accountNumber?: string): string | undefined {
+  if (!accountNumber || accountNumber.length <= 4) return accountNumber;
+  const visibleChars = Math.max(2, Math.ceil(accountNumber.length / 4));
+  return accountNumber.substring(0, visibleChars) + '*'.repeat(accountNumber.length - 2 * visibleChars) + accountNumber.slice(-visibleChars);
+}
+
 export interface ReceiptPdfProps {
   business: BusinessDocument;
   receipt: ReceiptDocument;

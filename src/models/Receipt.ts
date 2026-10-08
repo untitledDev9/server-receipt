@@ -32,6 +32,7 @@ export interface ReceiptDocument {
   // handled it, instead of every receipt always showing the admin's name.
   cashierName?: string;
   status: ReceiptStatus;
+  template?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -64,6 +65,7 @@ const receiptSchema = new Schema<ReceiptDocument>(
     cashierId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     cashierName: { type: String, trim: true },
     status: { type: String, enum: ['completed', 'pending', 'reversed', 'refunded'], default: 'completed' },
+    template: { type: String, enum: ['classic', 'modern', 'formal', 'minimal', 'compact', 'white'] },
   },
   { timestamps: true }
 );

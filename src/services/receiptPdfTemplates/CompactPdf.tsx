@@ -33,7 +33,7 @@ export function CompactPdf({ business, receipt, cashierName, qrDataUrl }: Receip
     { label: 'Ref', value: receipt.receiptNumber },
     { label: 'Txn ID', value: receipt.transactionId },
     { label: 'Date', value: formatDateTime(receipt.createdAt) },
-    { label: 'Paid by', value: receipt.customer?.name },
+    { label: 'Paid to', value: receipt.customer?.name },
     { label: 'Phone', value: receipt.customer?.phone },
     { label: 'Note', value: receipt.narration },
     { label: 'Method', value: PAYMENT_LABELS[receipt.paymentMethod] ?? receipt.paymentMethod },

@@ -36,14 +36,15 @@ function Field({ label, value }: { label: string; value?: string }) {
 export function ModernPdf({ business, receipt, cashierName, qrDataUrl }: ReceiptPdfProps) {
   const { header, footerText, showPlatformBranding } = business.receiptConfig;
   const currency = business.currency;
-  
+  const primaryColor = business.branding.primaryColor || '#0ea5e9';
+
   const taxLine = getTaxLine(business);
   const contactLines = getContactLines(business);
 
   return (
     <Document title={`${receipt.receiptNumber} - ${business.name}`}>
       <Page size={[297.6, 560]} style={styles.page}>
-        <View style={[styles.band, { backgroundColor: business.branding.primaryColor }]}>
+        <View style={[styles.band, { backgroundColor: primaryColor }]}>
           <View style={styles.bandHeaderRow}>
             {header.showLogo && business.logoUrl ? <Image style={styles.logo} src={business.logoUrl} /> : null}
             <View>
@@ -64,7 +65,7 @@ export function ModernPdf({ business, receipt, cashierName, qrDataUrl }: Receipt
             <Field label="Date" value={formatDateTime(receipt.createdAt)} />
             <Field label="Transaction ID" value={receipt.transactionId} />
             <Field label="Payment method" value={PAYMENT_LABELS[receipt.paymentMethod] ?? receipt.paymentMethod} />
-            <Field label="Paid by" value={receipt.customer?.name} />
+            <Field label="Paid to" value={receipt.customer?.name} />
             <Field label="Phone" value={receipt.customer?.phone} />
             <Field label="Received by" value={cashierName} />
           </View>

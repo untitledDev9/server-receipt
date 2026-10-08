@@ -75,7 +75,7 @@ export function ClassicPdf({ business, receipt, cashierName, qrDataUrl }: Receip
         </View>
         {receipt.customer?.name ? (
           <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Paid by</Text>
+            <Text style={styles.metaLabel}>Paid to</Text>
             <Text style={styles.metaValue}>{receipt.customer.name}</Text>
           </View>
         ) : null}

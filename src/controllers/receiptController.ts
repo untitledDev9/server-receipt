@@ -32,6 +32,7 @@ export const createReceipt = asyncHandler(async (req: Request, res: Response) =>
     cashierId: req.user!.userId,
     cashierName: data.cashierName,
     status: data.status || 'completed',
+    template: data.template,
   });
 
   res.status(201).json({ receipt });
@@ -130,10 +131,12 @@ export const duplicateReceipt = asyncHandler(async (req: Request, res: Response)
     transactionId: generateTransactionId(),
     amount: original.amount,
     narration: original.narration,
+    sender: original.sender,
     customer: original.customer,
     paymentMethod: original.paymentMethod,
     cashierId: req.user!.userId,
     cashierName: original.cashierName,
+    template: original.template,
   });
 
   res.status(201).json({ receipt });
@@ -266,9 +269,11 @@ function sanitizeReceipt(receipt: InstanceType<typeof Receipt>) {
     transactionId: receipt.transactionId,
     amount: receipt.amount,
     narration: receipt.narration,
+    sender: receipt.sender,
     customer: receipt.customer,
     paymentMethod: receipt.paymentMethod,
     status: receipt.status,
+    template: receipt.template,
     createdAt: receipt.createdAt,
     updatedAt: receipt.updatedAt,
   };
